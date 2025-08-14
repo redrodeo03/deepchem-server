@@ -8,7 +8,8 @@ program_map = {
     "train": core.train,
     "evaluate": core.model_evaluator,
     "infer": core.infer,
-    "train_valid_test_split": core.train_valid_test_split,
+    "train_valid_test_split": core.train_valid_test_split,,
+    "generate_pose": core.generate_pose,
 }
 
 
