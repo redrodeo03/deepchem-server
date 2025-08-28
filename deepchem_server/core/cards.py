@@ -5,7 +5,6 @@ from typing import Dict, Optional
 
 from deepchem_server.core import model_mappings
 
-
 class Card:
     """Base class for cards.
 
@@ -52,7 +51,6 @@ class Card:
         None
         """
         setattr(self, key, value)
-
 
 class DataCard(Card):
     """Class for storing data card attributes.
@@ -261,7 +259,6 @@ class DataCard(Card):
             Shape of the data to set.
         """
         self._shape = str(value)
-
 
 class ModelCard(Card):
     """Class for storing model card attributes.
