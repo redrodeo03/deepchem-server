@@ -1,9 +1,7 @@
 import os
 import tempfile
-from typing import Optional, List
 from deepchem_server.core import config
 from deepchem_server.core.cards import DataCard
-from deepchem_server.core.address import DeepchemAddress
 from deepchem_server.core.progress_logger import log_progress
 from deepchem.dock.pose_generation import VinaPoseGenerator
 
@@ -96,6 +94,9 @@ def generate_pose(
             card = DataCard(address='', file_type='json', data_type='docking results')
 
             result_address = datastore.upload_data_from_memory(results, f"{output}_results.json", card)
+
+            if result_address is None:
+                raise ValueError("Failed to upload docking results to datastore")
 
             log_progress('docking', 100, 'VINA docking completed successfully')
             return result_address
