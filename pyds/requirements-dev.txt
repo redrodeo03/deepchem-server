@@ -1,0 +1,21 @@
+# Development dependencies
+# Install with: pip install -r requirements-dev.txt
+
+# Include runtime dependencies
+-r requirements.txt
+
+# Testing
+pytest>=6.0
+pytest-mock>=3.6
+pytest-cov>=3.0
+responses>=0.20.0
+
+# Building and packaging
+build>=0.8.0
+twine>=4.0.0
+
+# Code quality
+yapf
+flake8
+isort
+mypy

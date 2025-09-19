@@ -1,12 +1,12 @@
-Py-DS Library
+pyds Library
 =============
 
-The py-ds library provides a Python client for interacting with DeepChem Server. It offers a convenient, programmatic way to upload data, run featurization tasks, and manage datasets without dealing with raw HTTP requests.
+The pyds library provides a Python client for interacting with DeepChem Server. It offers a convenient, programmatic way to upload data, run featurization tasks, and manage datasets without dealing with raw HTTP requests.
 
 Overview
 --------
 
-The py-ds library simplifies common workflows by providing:
+The pyds library simplifies common workflows by providing:
 
 * **High-level functions** for data upload and featurization
 * **Error handling** and retry logic for robust operations
@@ -16,17 +16,17 @@ The py-ds library simplifies common workflows by providing:
 Installation
 ------------
 
-Install the py-ds library using pip:
+Install the pyds library using pip:
 
 .. code-block:: bash
 
-   pip install py-ds
+   pip install pyds
 
 Or install from source:
 
 .. code-block:: bash
 
-   cd py-ds
+   cd pyds
    pip install -e .
 
 Configuration
@@ -37,7 +37,7 @@ Configure the library to connect to your DeepChem Server using environment varia
 Interactive API Testing
 -----------------------
 
-For the most up-to-date examples and interactive testing of the underlying API that the py-ds library uses, visit http://localhost:8000/docs when your DeepChem Server is running.
+For the most up-to-date examples and interactive testing of the underlying API that the pyds library uses, visit http://localhost:8000/docs when your DeepChem Server is running.
 
 The Swagger UI provides:
 
@@ -49,7 +49,7 @@ The Swagger UI provides:
 Library Documentation
 ---------------------
 
-For detailed documentation of the py-ds library functions and classes, refer to the auto-generated documentation from the source code docstrings.
+For detailed documentation of the pyds library functions and classes, refer to the auto-generated documentation from the source code docstrings.
 
 Getting Started
 ---------------
@@ -63,5 +63,5 @@ Getting Started
 For comprehensive examples, testing, and up-to-date API information, always refer to:
 
 * **Interactive docs**: http://localhost:8000/docs
-* **Source code**: Check the py-ds directory for implementation details
+* **Source code**: Check the pyds directory for implementation details
 * **Module documentation**: Auto-generated docs from docstrings 

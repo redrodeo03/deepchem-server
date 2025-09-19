@@ -80,7 +80,7 @@ Now that you understand the basic workflow:
 
 1. **Visit the Interactive Docs**: Go to http://localhost:8000/docs to test endpoints
 2. **Try Different Featurizers**: Experiment with various molecular representations
-3. **Use the Python Client**: Explore the py-ds library for programmatic access
+3. **Use the Python Client**: Explore the pyds library for programmatic access
 4. **Consult DeepChem Documentation**: For detailed featurizer information, see the `DeepChem Featurizers documentation <https://deepchem.readthedocs.io/en/latest/api_reference/featurizers.html>`_
 
 Troubleshooting Quick Start

@@ -1,0 +1,71 @@
+[run]
+# Enable branch coverage for more detailed analysis
+branch = True
+
+# Specify the source package to measure coverage for
+source = pyds
+
+# Files and patterns to omit from coverage measurement
+omit =
+    */tests/*
+    */test_*
+    */__pycache__/*
+    */.*
+    */venv/*
+    */env/*
+    setup.py
+    conftest.py
+
+[report]
+# Show line numbers that are missing coverage
+show_missing = True
+
+# Skip files that are 100% covered to make reports more concise
+skip_covered = False
+
+# Set minimum coverage threshold (build will fail if below this)
+fail_under = 75
+
+# Precision for coverage percentage display
+precision = 1
+
+# Sort the report by coverage percentage (ascending)
+sort = Cover
+
+# Exclude specific lines from coverage measurement
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug-only code:
+    def __repr__
+    if self\.debug
+
+    # Don't complain if tests don't hit defensive assertion code:
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run:
+    if 0:
+    if False:
+    if __name__ == .__main__.:
+
+    # Don't complain about abstract methods
+    @(abc\.)?abstractmethod
+
+    # Don't complain about TYPE_CHECKING imports
+    if TYPE_CHECKING:
+
+    # Don't complain about protocol methods
+    \.\.\.
+
+[html]
+# HTML report output directory
+directory = htmlcov
+
+# Title for the HTML report
+title = pyds Coverage Report
+
+[xml]
+# XML report output file
+output = coverage.xml

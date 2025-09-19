@@ -26,7 +26,7 @@ A minimal cloud infrastructure for [DeepChem](https://github.com/deepchem/deepch
 * **FastAPI Backend** – blazing-fast web framework with automatic, interactive API docs (Swagger UI & ReDoc).
 * **DeepChem Integration** – built-in support for DeepChem featurizers and models.
 * **Flexible Datastore** – pluggable storage layer (local disk by default) for datasets & models.
-* **Python SDK (`py-ds`)** – high-level client library for programmatic access & batch workflows.
+* **Python SDK (`pyds`)** – high-level client library for programmatic access & batch workflows.
 * **Containerised Deployment** – first-class Docker support for easy, reproducible setups.
 
 ## Requirements
@@ -108,7 +108,7 @@ $ bash start-dev-server.sh  # or uvicorn deepchem_server.main:app --reload
 For a fully-worked example, run the integration test:
 
 ```bash
-python py-ds/tests/test_upload_featurize.py
+python pyds/tests/test_upload_featurize.py
 ```
 
 ---
@@ -120,7 +120,7 @@ python py-ds/tests/test_upload_featurize.py
 │   ├── core/                # Business logic (featurization, datastore, …)
 │   ├── routers/             # API routes grouped by domain
 │   └── main.py              # ASGI entry-point
-├── py-ds/                   # Python client (SDK)
+├── pyds/                   # Python client (SDK)
 ├── docs/                    # Sphinx documentation (see docs/source)
 ├── Dockerfile & docker.sh   # Container build & helper script
 └── tests/                   # Py-test suites & sample assets

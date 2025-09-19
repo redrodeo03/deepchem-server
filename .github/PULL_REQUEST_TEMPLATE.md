@@ -22,7 +22,7 @@ Please check the option that is related to your PR.
 - [ ] Run `yapf -i <modified file>` and check no errors
 - [ ] Run `flake8 <modified file> --count` and check no errors
 - [ ] Run `mypy -p deepchem_server` and check no errors
-- [ ] Run `mypy -p py-ds` and check no errors
+- [ ] Run `mypy -p pyds` and check no errors
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation

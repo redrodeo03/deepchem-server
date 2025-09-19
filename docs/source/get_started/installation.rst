@@ -106,7 +106,7 @@ For developers who want to contribute or customize the server:
 
    .. code-block:: bash
 
-      cd py-ds/tests
+      cd pyds/tests
       python test_upload_featurize.py
 
 Server Configuration
@@ -137,7 +137,7 @@ After installation, verify that everything is working correctly:
 
    .. code-block:: bash
 
-      cd py-ds/tests
+      cd pyds/tests
       python test_upload_featurize.py
 
 Troubleshooting

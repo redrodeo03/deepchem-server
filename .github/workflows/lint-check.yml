@@ -32,9 +32,9 @@ jobs:
       - name: Check type hints deepchem_server
         continue-on-error: false 
         run: mypy -p deepchem_server
-      - name: Check type hints py-ds
+      - name: Check type hints pyds
         continue-on-error: false
-        run: mypy -p py-ds
+        run: mypy -p pyds
 
   yapf:
     runs-on: ubuntu-latest
