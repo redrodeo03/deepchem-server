@@ -15,3 +15,4 @@ dgl
 dgllife
 -f https://data.dgl.ai/wheels/torch-2.1/repo.html
 torch_geometric
+vina
