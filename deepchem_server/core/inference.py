@@ -205,7 +205,7 @@ def infer(model_address: str,
                 if len(pred_rows) == 1:
                     header_columns.append('y_preds')
                 else:
-                    header_columns.extend([f'y{i+1}_preds' for i in range(len(pred_rows))])
+                    header_columns.extend([f'y{i + 1}_preds' for i in range(len(pred_rows))])
                 if threshold is not None:
                     header_columns.append('binarized_preds')
                     pred_rows.append(binary_predictions)

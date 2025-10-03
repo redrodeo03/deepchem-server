@@ -4,6 +4,7 @@ import os
 import json
 import pytest
 
+
 def test_generate_pose_basic_functionality(disk_datastore):
     """Test basic VINA pose generation functionality."""
     config.set_datastore(disk_datastore)
@@ -48,6 +49,7 @@ def test_generate_pose_basic_functionality(disk_datastore):
     assert results['complexes_count'] >= 0
     assert 'VINA docking completed successfully' in results['message']
 
+
 def test_generate_pose_multiple_modes(disk_datastore):
     """Test VINA pose generation with multiple modes."""
     config.set_datastore(disk_datastore)
@@ -88,6 +90,7 @@ def test_generate_pose_multiple_modes(disk_datastore):
         # Scores should be numeric
         assert isinstance(scores[mode_key]['affinity (kcal/mol)'], (int, float))
 
+
 def test_generate_pose_sdf_ligands(disk_datastore):
     """Test VINA pose generation with SDF ligand files."""
     config.set_datastore(disk_datastore)
@@ -120,6 +123,7 @@ def test_generate_pose_sdf_ligands(disk_datastore):
     assert results['docking_method'] == 'VINA'
     assert results['num_modes'] >= 0
 
+
 def test_generate_pose_exhaustiveness_parameter(disk_datastore):
     """Test VINA pose generation with different exhaustiveness values."""
     config.set_datastore(disk_datastore)
@@ -151,6 +155,7 @@ def test_generate_pose_exhaustiveness_parameter(disk_datastore):
 
         assert results['docking_method'] == 'VINA'
         assert results['num_modes'] >= 0
+
 
 def test_generate_pose_nested_full_address(disk_datastore):
     """Test VINA pose generation with nested full addresses."""
@@ -186,6 +191,7 @@ def test_generate_pose_nested_full_address(disk_datastore):
 
     assert results['docking_method'] == 'VINA'
     assert results['num_modes'] >= 0
+
 
 def test_generate_pose_score_formatting(disk_datastore):
     """Test that VINA scores are formatted correctly"""
@@ -229,6 +235,7 @@ def test_generate_pose_score_formatting(disk_datastore):
         # VINA scores are typically negative (better binding = more negative)
         # But we don't enforce this strictly as it depends on the specific system
 
+
 def test_generate_pose_error_handling(disk_datastore):
     """Test error handling in VINA pose generation."""
     config.set_datastore(disk_datastore)
@@ -245,6 +252,7 @@ def test_generate_pose_error_handling(disk_datastore):
     with pytest.raises(ValueError) as context:
         generate_pose(protein_address=None, ligand_address="deepchem://test/ligand.pdb", output='test_error')
     assert "Protein and/or ligand input is required" in str(context.value)
+
 
 def test_generate_pose_progress_logging(disk_datastore):
     """Test that progress logging is properly integrated."""
@@ -276,6 +284,7 @@ def test_generate_pose_progress_logging(disk_datastore):
 
     assert results['docking_method'] == 'VINA'
     assert results['num_modes'] >= 0
+
 
 def test_generate_pose_data_card_integration(disk_datastore):
     """Test that DataCard integration works correctly for docking results."""
