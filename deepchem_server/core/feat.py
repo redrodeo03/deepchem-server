@@ -170,10 +170,10 @@ def featurize_part(
                     n_core=nproc,
                     parent=main_dataset_address,
                     description=f"featurized partition of \
-            {main_dataset_address} : {checkpoint_id} of {nproc-1}")
+            {main_dataset_address} : {checkpoint_id} of {nproc - 1}")
 
     datastore.upload_data_from_memory(dataset,
-                                      checkpoint_output_key + f'/_checkpoint/part_{checkpoint_id}_of_{nproc-1}', card)
+                                      checkpoint_output_key + f'/_checkpoint/part_{checkpoint_id}_of_{nproc - 1}', card)
 
 
 def featurize_multi_core(
@@ -365,7 +365,7 @@ def featurize(
         n_core = list(n_core_set)[0]
         if n_core > os.cpu_count():  # type: ignore
             raise Exception(
-                f"Current job config is insufficient to restart the job as it requires atleast {n_core//2} vcpus")
+                f"Current job config is insufficient to restart the job as it requires atleast {n_core // 2} vcpus")
     elif len(n_core_set) > 1:
         raise Exception("Checkpoints found with more than one partition type")
 

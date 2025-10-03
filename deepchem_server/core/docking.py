@@ -5,6 +5,7 @@ from deepchem_server.core.cards import DataCard
 from deepchem_server.core.progress_logger import log_progress
 from deepchem.dock.pose_generation import VinaPoseGenerator
 
+
 def generate_pose(
     protein_address: str,
     ligand_address: str,
