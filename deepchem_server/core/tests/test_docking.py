@@ -34,7 +34,7 @@ def test_generate_pose_basic_functionality(disk_datastore):
 
     # Download and verify results
     results_data = disk_datastore.get(result_address)
-    results = json.loads(results_data)
+    results = json.loads(results_data) if isinstance(results_data, str) else results_data
 
     # Check basic structure
     assert 'docking_method' in results
@@ -73,7 +73,7 @@ def test_generate_pose_multiple_modes(disk_datastore):
 
     # Download and verify results
     results_data = disk_datastore.get(result_address)
-    results = json.loads(results_data)
+    results = json.loads(results_data) if isinstance(results_data, str) else results_data
 
     # Check that we have scores for multiple modes
     assert 'scores' in results
@@ -118,7 +118,7 @@ def test_generate_pose_sdf_ligands(disk_datastore):
 
     # Download and verify results
     results_data = disk_datastore.get(result_address)
-    results = json.loads(results_data)
+    results = json.loads(results_data) if isinstance(results_data, str) else results_data
 
     assert results['docking_method'] == 'VINA'
     assert results['num_modes'] >= 0
@@ -151,7 +151,7 @@ def test_generate_pose_exhaustiveness_parameter(disk_datastore):
 
         # Download and verify results
         results_data = disk_datastore.get(result_address)
-        results = json.loads(results_data)
+        results = json.loads(results_data) if isinstance(results_data, str) else results_data
 
         assert results['docking_method'] == 'VINA'
         assert results['num_modes'] >= 0
@@ -187,7 +187,7 @@ def test_generate_pose_nested_full_address(disk_datastore):
 
     # Download and verify results
     results_data = disk_datastore.get(result_address)
-    results = json.loads(results_data)
+    results = json.loads(results_data) if isinstance(results_data, str) else results_data
 
     assert results['docking_method'] == 'VINA'
     assert results['num_modes'] >= 0
@@ -216,7 +216,7 @@ def test_generate_pose_score_formatting(disk_datastore):
 
     # Download and verify results
     results_data = disk_datastore.get(result_address)
-    results = json.loads(results_data)
+    results = json.loads(results_data) if isinstance(results_data, str) else results_data
 
     # Check exact score format: 'mode %s' % (i + 1)
     scores = results['scores']
@@ -280,7 +280,7 @@ def test_generate_pose_progress_logging(disk_datastore):
 
     # Download and verify results
     results_data = disk_datastore.get(result_address)
-    results = json.loads(results_data)
+    results = json.loads(results_data) if isinstance(results_data, str) else results_data
 
     assert results['docking_method'] == 'VINA'
     assert results['num_modes'] >= 0
