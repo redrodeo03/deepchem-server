@@ -7,6 +7,12 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'deepchem_server/**'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - 'docker.sh'
+      - '.github/workflows/build-check.yml'
   workflow_dispatch:
 
 jobs:

@@ -9,10 +9,11 @@ on:
       - main
     paths:
       - "deepchem_server/core/**"
+      - ".github/workflows/core-pytests.yml"
   workflow_dispatch:
 
 jobs:
-  run-core_pytest:
+  run_core_pytest:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,8 +23,8 @@ jobs:
       - name: Clean up unnecessary pre-installed software
         uses: ./.github/actions/cleanup
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up MicroMamba and install core dependencies
+        uses: mamba-org/setup-micromamba@v2
         with:
           python-version: '3.10'
 
@@ -38,6 +39,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --no-cache-dir -r deepchem_server/requirements.txt
+          environment-file: "./deepchem_server/environments/core_environment.yml"
+          init-shell: bash
+          post-cleanup: "all"
+      
+      - name: Install dev dependencies
+        run: micromamba run -n deepchem-server-env pip install -r deepchem_server/environments/dev-requirements.txt
 
       - name: Run tests
-        run: pytest deepchem_server/core/tests
+        run: micromamba run -n deepchem-server-env pytest deepchem_server/core/tests/

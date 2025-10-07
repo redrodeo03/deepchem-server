@@ -11,6 +11,7 @@ on:
       - main
     paths:
       - '**.py'
+      - '.github/workflows/lint-check.yml'
 
 jobs:
   mypy:
