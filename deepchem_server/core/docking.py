@@ -4,6 +4,7 @@ from deepchem_server.core import config
 from deepchem_server.core.cards import DataCard
 from deepchem_server.core.progress_logger import log_progress
 from deepchem.dock.pose_generation import VinaPoseGenerator
+from deepchem.utils.docking_utils import prepare_inputs
 
 
 def generate_pose(
@@ -50,16 +51,22 @@ def generate_pose(
         datastore.download_object(protein_address, protein_path)
 
         log_progress('docking', 20, f'downloading ligand from {ligand_address}')
-        ligand_path = os.path.join(tempdir.name, 'ligand.sdf')
+        # Determine ligand file extension based on the address
+        ligand_ext = '.sdf' if ligand_address.endswith('.sdf') else '.pdb'
+        ligand_path = os.path.join(tempdir.name, f'ligand{ligand_ext}')
         datastore.download_object(ligand_address, ligand_path)
 
-        log_progress('docking', 30, 'initializing VINA pose generator')
+        log_progress('docking', 30, 'preparing molecules for VINA')
+        # Prepare inputs using DeepChem's utility
+        protein_mol, ligand_mol = prepare_inputs(protein_path, ligand_path)
+        
+        log_progress('docking', 40, 'initializing VINA pose generator')
         pg = VinaPoseGenerator()
 
         with tempdir as tmp:
-            log_progress('docking', 40, f'generating {num_modes} poses with VINA')
-            # Generate poses
-            complexes, scores = pg.generate_poses(molecular_complex=(protein_path, ligand_path),
+            log_progress('docking', 50, f'generating {num_modes} poses with VINA')
+            # Generate poses using prepared molecules
+            complexes, scores = pg.generate_poses(molecular_complex=(protein_mol, ligand_mol),
                                                   exhaustiveness=exhaustiveness,
                                                   num_modes=num_modes,
                                                   out_dir=tmp,
@@ -74,9 +81,9 @@ def generate_pose(
             if actual_modes == 0:
                 raise ValueError("No valid docking results generated")
 
-            log_progress('docking', 50, f'generated {actual_modes} valid poses')
+            log_progress('docking', 60, f'generated {actual_modes} valid poses')
 
-            log_progress('docking', 60, 'preparing results')
+            log_progress('docking', 70, 'preparing results')
             # Format scores
             scores_formatted = {}
             for i in range(actual_modes):
