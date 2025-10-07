@@ -1,10 +1,98 @@
 import os
 import tempfile
+from typing import Tuple, Any
 from deepchem_server.core import config
 from deepchem_server.core.cards import DataCard
 from deepchem_server.core.progress_logger import log_progress
 from deepchem.dock.pose_generation import VinaPoseGenerator
-from deepchem.utils.docking_utils import prepare_inputs
+
+# Local, robust preparation to support PDB/SDF ligands and avoid None mols
+try:
+    from rdkit import Chem
+    from rdkit.Chem import AllChem
+    from pdbfixer import PDBFixer
+    from openmm.app import PDBFile
+except Exception:
+    # Imports will be validated at runtime when docking is invoked
+    Chem = None  # type: ignore
+    AllChem = None  # type: ignore
+    PDBFixer = None  # type: ignore
+    PDBFile = None  # type: ignore
+
+
+def _prepare_rdkit_mol_from_pdb(path: str) -> Any:
+    m = Chem.MolFromPDBFile(path, sanitize=False, removeHs=False)
+    if m is None:
+        raise ValueError(f"Failed to parse PDB ligand from '{path}'")
+    try:
+        Chem.SanitizeMol(m)
+    except Exception:
+        # Leave as minimally sanitized if full sanitize fails
+        pass
+    return m
+
+
+def _prepare_rdkit_mol_from_sdf(path: str) -> Any:
+    supplier = Chem.SDMolSupplier(path, sanitize=False, removeHs=False)
+    if len(supplier) == 0 or supplier[0] is None:
+        raise ValueError(f"Failed to parse SDF ligand from '{path}'")
+    m = supplier[0]
+    try:
+        Chem.SanitizeMol(m)
+    except Exception:
+        pass
+    return m
+
+
+def _embed_and_optimize(mol: Any) -> Any:
+    # Ensure hydrogens and 3D coordinates
+    mol_h = Chem.AddHs(mol, addCoords=True)
+    if mol_h.GetNumConformers() == 0:
+        AllChem.EmbedMolecule(mol_h, AllChem.ETKDGv3())
+    try:
+        # Prefer MMFF if parameters available; otherwise fall back to UFF
+        if AllChem.MMFFHasAllMoleculeParams(mol_h):
+            AllChem.MMFFOptimizeMolecule(mol_h)
+        else:
+            AllChem.UFFOptimizeMolecule(mol_h)
+    except Exception:
+        # Optimization is best-effort; proceed if embedding succeeded
+        pass
+    return mol_h
+
+
+def _prepare_inputs_local(protein: str, ligand: str) -> Tuple[Any, Any]:
+    if Chem is None or AllChem is None:
+        raise ImportError("Docking requires RDKit to be installed.")
+
+    # Prepare protein
+    if PDBFixer is not None and PDBFile is not None:
+        fixer = PDBFixer(protein)
+        fixer.findMissingResidues()
+        fixer.findNonstandardResidues()
+        fixer.replaceNonstandardResidues()
+        fixer.removeHeterogens(False)
+        fixer.addMissingHydrogens(7.0)
+        tmp_protein_pdb = os.path.join(os.path.dirname(protein), "protein_fixed.pdb")
+        with open(tmp_protein_pdb, "w") as f:
+            PDBFile.writeFile(fixer.topology, fixer.positions, f)
+        protein_mol = Chem.MolFromPDBFile(tmp_protein_pdb, sanitize=True, removeHs=False)
+    else:
+        # Fallback: use protein as-is with RDKit
+        protein_mol = Chem.MolFromPDBFile(protein, sanitize=True, removeHs=False)
+    if protein_mol is None:
+        raise ValueError("Failed to prepare protein PDB for docking")
+
+    # Prepare ligand from SDF or PDB
+    ligand_ext = os.path.splitext(ligand)[1].lower()
+    if ligand_ext == ".sdf":
+        ligand_mol_raw = _prepare_rdkit_mol_from_sdf(ligand)
+    else:
+        ligand_mol_raw = _prepare_rdkit_mol_from_pdb(ligand)
+
+    ligand_mol = _embed_and_optimize(ligand_mol_raw)
+
+    return protein_mol, ligand_mol
 
 
 def generate_pose(
@@ -57,8 +145,8 @@ def generate_pose(
         datastore.download_object(ligand_address, ligand_path)
 
         log_progress('docking', 30, 'preparing molecules for VINA')
-        # Prepare inputs using DeepChem's utility
-        protein_mol, ligand_mol = prepare_inputs(protein_path, ligand_path)
+        # Prepare inputs locally to support SDF/PDB ligands robustly
+        protein_mol, ligand_mol = _prepare_inputs_local(protein_path, ligand_path)
         
         log_progress('docking', 40, 'initializing VINA pose generator')
         pg = VinaPoseGenerator()
