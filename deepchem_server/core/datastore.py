@@ -561,8 +561,9 @@ class DiskDataStore(DataStore):
                 with open(path, 'r') as f:
                     data = f.readlines()
             elif card.file_type == 'json':
+                # Return raw JSON string; callers can parse as needed
                 with open(path, 'r') as f:
-                    data = json.load(f)
+                    data = f.read()
                 return data
             elif card.file_type == 'txt':
                 with open(path, 'r') as f:

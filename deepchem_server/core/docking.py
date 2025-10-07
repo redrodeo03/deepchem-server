@@ -157,6 +157,21 @@ def generate_pose(
         log_progress('docking', 30, 'preparing molecules for VINA')
         protein_input = protein_path
         ligand_input = ligand_path
+        # Robustness for SDF ligands: if reader struggles, convert first mol to PDB
+        if ligand_path.lower().endswith('.sdf') and Chem is not None:
+            try:
+                supplier = Chem.SDMolSupplier(ligand_path, sanitize=False, removeHs=False)
+                if len(supplier) > 0 and supplier[0] is not None:
+                    m = supplier[0]
+                    try:
+                        Chem.SanitizeMol(m)
+                    except Exception:
+                        pass
+                    tmp_ligand_pdb = os.path.join(tempdir.name, 'ligand_from_sdf.pdb')
+                    Chem.MolToPDBFile(m, tmp_ligand_pdb)
+                    ligand_input = tmp_ligand_pdb
+            except Exception:
+                pass
 
         log_progress('docking', 40, 'initializing VINA pose generator')
         pg = VinaPoseGenerator()
@@ -202,7 +217,7 @@ def generate_pose(
 
             log_progress('docking', 90, 'uploading results summary')
             # Upload results summary
-            card = DataCard(address='', file_type='json', data_type='json')
+            card = DataCard(address='', file_type='json', data_type='docking results')
             results_json = json.dumps(results)
             result_address = datastore.upload_data_from_memory(
                 results_json, f"{output}_results.json", card)
