@@ -145,9 +145,10 @@ def generate_pose(
         ligand_path = os.path.join(tempdir.name, f'ligand{ligand_ext}')
         datastore.download_object(ligand_address, ligand_path)
 
+        # For VINA, pass raw file paths; DeepChem handles preparation internally
         log_progress('docking', 30, 'preparing molecules for VINA')
-        # Prepare inputs locally to support SDF/PDB ligands robustly
-        protein_mol, ligand_mol = _prepare_inputs_local(protein_path, ligand_path)
+        protein_input = protein_path
+        ligand_input = ligand_path
         
         log_progress('docking', 40, 'initializing VINA pose generator')
         pg = VinaPoseGenerator()
@@ -155,7 +156,7 @@ def generate_pose(
         with tempdir as tmp:
             log_progress('docking', 50, f'generating {num_modes} poses with VINA')
             # Generate poses using prepared molecules
-            complexes, scores = pg.generate_poses(molecular_complex=(protein_mol, ligand_mol),
+            complexes, scores = pg.generate_poses(molecular_complex=(protein_input, ligand_input),
                                                   exhaustiveness=exhaustiveness,
                                                   num_modes=num_modes,
                                                   out_dir=tmp,
