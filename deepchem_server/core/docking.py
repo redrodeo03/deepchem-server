@@ -76,10 +76,11 @@ def _prepare_inputs_local(protein: str, ligand: str) -> Tuple[Any, Any]:
         tmp_protein_pdb = os.path.join(os.path.dirname(protein), "protein_fixed.pdb")
         with open(tmp_protein_pdb, "w") as f:
             PDBFile.writeFile(fixer.topology, fixer.positions, f)
-        protein_mol = Chem.MolFromPDBFile(tmp_protein_pdb, sanitize=True, removeHs=False)
+        # Load protein without sanitization; allow RDKit to drop hydrogens as needed
+        protein_mol = Chem.MolFromPDBFile(tmp_protein_pdb, sanitize=False, removeHs=True)
     else:
-        # Fallback: use protein as-is with RDKit
-        protein_mol = Chem.MolFromPDBFile(protein, sanitize=True, removeHs=False)
+        # Fallback: use protein as-is with RDKit, guarded sanitize
+        protein_mol = Chem.MolFromPDBFile(protein, sanitize=False, removeHs=True)
     if protein_mol is None:
         raise ValueError("Failed to prepare protein PDB for docking")
 
