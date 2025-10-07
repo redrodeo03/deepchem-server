@@ -74,14 +74,19 @@ def _prepare_inputs_local(protein: str, ligand: str) -> Tuple[Any, Any]:
         fixer.replaceNonstandardResidues()
         fixer.removeHeterogens(False)
         fixer.addMissingHydrogens(7.0)
-        tmp_protein_pdb = os.path.join(os.path.dirname(protein), "protein_fixed.pdb")
+        tmp_protein_pdb = os.path.join(os.path.dirname(protein),
+                                       "protein_fixed.pdb")
         with open(tmp_protein_pdb, "w") as f:
             PDBFile.writeFile(fixer.topology, fixer.positions, f)
         # Load protein without sanitization; allow RDKit to drop hydrogens as needed
-        protein_mol = Chem.MolFromPDBFile(tmp_protein_pdb, sanitize=False, removeHs=True)
+        protein_mol = Chem.MolFromPDBFile(tmp_protein_pdb,
+                                          sanitize=False,
+                                          removeHs=True)
     else:
         # Fallback: use protein as-is with RDKit, guarded sanitize
-        protein_mol = Chem.MolFromPDBFile(protein, sanitize=False, removeHs=True)
+        protein_mol = Chem.MolFromPDBFile(protein,
+                                          sanitize=False,
+                                          removeHs=True)
     if protein_mol is None:
         raise ValueError("Failed to prepare protein PDB for docking")
 
@@ -136,11 +141,13 @@ def generate_pose(
     try:
         tempdir = tempfile.TemporaryDirectory()
 
-        log_progress('docking', 10, f'downloading protein from {protein_address}')
+        log_progress('docking', 10,
+                     f'downloading protein from {protein_address}')
         protein_path = os.path.join(tempdir.name, 'protein.pdb')
         datastore.download_object(protein_address, protein_path)
 
-        log_progress('docking', 20, f'downloading ligand from {ligand_address}')
+        log_progress('docking', 20,
+                     f'downloading ligand from {ligand_address}')
         # Determine ligand file extension based on the address
         ligand_ext = '.sdf' if ligand_address.endswith('.sdf') else '.pdb'
         ligand_path = os.path.join(tempdir.name, f'ligand{ligand_ext}')
@@ -150,18 +157,20 @@ def generate_pose(
         log_progress('docking', 30, 'preparing molecules for VINA')
         protein_input = protein_path
         ligand_input = ligand_path
-        
+
         log_progress('docking', 40, 'initializing VINA pose generator')
         pg = VinaPoseGenerator()
 
         with tempdir as tmp:
-            log_progress('docking', 50, f'generating {num_modes} poses with VINA')
+            log_progress('docking', 50,
+                         f'generating {num_modes} poses with VINA')
             # Generate poses using prepared molecules
-            complexes, scores = pg.generate_poses(molecular_complex=(protein_input, ligand_input),
-                                                  exhaustiveness=exhaustiveness,
-                                                  num_modes=num_modes,
-                                                  out_dir=tmp,
-                                                  generate_scores=True)
+            complexes, scores = pg.generate_poses(
+                molecular_complex=(protein_input, ligand_input),
+                exhaustiveness=exhaustiveness,
+                num_modes=num_modes,
+                out_dir=tmp,
+                generate_scores=True)
 
             # Validate that we got valid results
             if not complexes or not scores:
@@ -172,13 +181,16 @@ def generate_pose(
             if actual_modes == 0:
                 raise ValueError("No valid docking results generated")
 
-            log_progress('docking', 60, f'generated {actual_modes} valid poses')
+            log_progress('docking', 60,
+                         f'generated {actual_modes} valid poses')
 
             log_progress('docking', 70, 'preparing results')
             # Format scores
             scores_formatted = {}
             for i in range(actual_modes):
-                scores_formatted['mode %s' % (i + 1)] = {'affinity (kcal/mol)': float(scores[i])}
+                scores_formatted['mode %s' % (i + 1)] = {
+                    'affinity (kcal/mol)': float(scores[i])
+                }
 
             results = {
                 'docking_method': 'VINA',
@@ -190,12 +202,14 @@ def generate_pose(
 
             log_progress('docking', 90, 'uploading results summary')
             # Upload results summary
-            card = DataCard(address='', file_type='json', data_type='docking results')
+            card = DataCard(address='', file_type='json', data_type='json')
             results_json = json.dumps(results)
-            result_address = datastore.upload_data_from_memory(results_json, f"{output}_results.json", card)
+            result_address = datastore.upload_data_from_memory(
+                results_json, f"{output}_results.json", card)
 
             if result_address is None:
-                raise ValueError("Failed to upload docking results to datastore")
+                raise ValueError(
+                    "Failed to upload docking results to datastore")
 
             log_progress('docking', 100, 'VINA docking completed successfully')
             return result_address
