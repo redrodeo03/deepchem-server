@@ -1,4 +1,5 @@
 import os
+import json
 import tempfile
 from typing import Tuple, Any
 from deepchem_server.core import config
@@ -190,8 +191,8 @@ def generate_pose(
             log_progress('docking', 90, 'uploading results summary')
             # Upload results summary
             card = DataCard(address='', file_type='json', data_type='docking results')
-
-            result_address = datastore.upload_data_from_memory(results, f"{output}_results.json", card)
+            results_json = json.dumps(results)
+            result_address = datastore.upload_data_from_memory(results_json, f"{output}_results.json", card)
 
             if result_address is None:
                 raise ValueError("Failed to upload docking results to datastore")
