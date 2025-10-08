@@ -2,7 +2,6 @@
 # mypy errors ignored because ModelCard yet to added
 from __future__ import annotations
 
-import json
 import logging
 import os
 from pathlib import Path
@@ -561,10 +560,14 @@ class DiskDataStore(DataStore):
                 with open(path, 'r') as f:
                     data = f.readlines()
             elif card.file_type == 'json':
-                # Return raw JSON string; callers can parse as needed
+                # Return parsed JSON if possible; fall back to raw string
                 with open(path, 'r') as f:
-                    data = f.read()
-                return data
+                    text = f.read()
+                try:
+                    import json as _json
+                    return _json.loads(text)
+                except Exception:
+                    return text
             elif card.file_type == 'txt':
                 with open(path, 'r') as f:
                     data = f.readlines()

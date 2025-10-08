@@ -212,19 +212,17 @@ def generate_pose(
                 'num_modes': actual_modes,
                 'scores': scores_formatted,
                 'complexes_count': len(complexes),
-                'message': 'VINA docking completed successfully'
+                'message': 'VINA docking completed successfully',
             }
 
             log_progress('docking', 90, 'uploading results summary')
-            # Upload results summary
+            # Upload results summary: file is JSON, logical data type is 'docking results'
             card = DataCard(address='', file_type='json', data_type='docking results')
             results_json = json.dumps(results)
-            result_address = datastore.upload_data_from_memory(
-                results_json, f"{output}_results.json", card)
+            result_address = datastore.upload_data_from_memory(results_json, f"{output}_results.json", card)
 
             if result_address is None:
-                raise ValueError(
-                    "Failed to upload docking results to datastore")
+                raise ValueError("Failed to upload docking results to datastore")
 
             log_progress('docking', 100, 'VINA docking completed successfully')
             return result_address
