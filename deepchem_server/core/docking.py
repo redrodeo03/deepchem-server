@@ -200,9 +200,7 @@ def generate_pose(
             modes_to_report = max(actual_modes, num_modes)
             for i in range(modes_to_report):
                 idx = min(i, actual_modes - 1)
-                scores_formatted['mode %s' % (i + 1)] = {
-                    'affinity (kcal/mol)': float(scores[idx])
-                }
+                scores_formatted['mode %s' % (i + 1)] = {'affinity (kcal/mol)': float(scores[idx])}
 
             results = {
                 'docking_method': 'VINA',
